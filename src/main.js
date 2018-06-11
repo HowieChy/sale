@@ -27,7 +27,7 @@ export default {
       /* eslint-disable */
       list: [{
         pagePath: 'pages/index/index',
-        text: '首页',
+        text: '首页233',
         // iconPath: 'static/images/icon_nav_button.png',
         // selectedIconPath: 'static/images/icon_nav_button.png'
       },
