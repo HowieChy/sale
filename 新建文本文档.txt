@@ -1,0 +1,309 @@
+<template>
+  <div class="container" @click="clickHandle('test click', $event)">
+
+
+    <!--<div class="warp" @touchstart="wxtouchStart" @touchmove="wxtouchMove" @touchend="wxtouchEnd">-->
+      <!--<div class="box">-->
+        <!--<div  v-for="(item,index) in arr"  :class="{outActive:door&&index==0,inActive:door&&index==1,outActive2:door2&&index==0}" >-->
+          <!--<img :src="item" alt="">-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+
+
+    <div class="htmleaf-content">
+      <div class="slider" @touchstart="wxtouchStart" @touchmove="wxtouchMove" @touchend="wxtouchEnd">
+        <div v-if="arr.length==2" v-for="(item,index)  in arr" :class="{slide:true,activeRight2:doorRight&&index==leave,activeLeft2:doorLeft&&index==leave,activeIn2:doorLeft&&index==inShow,activeIn2:doorRight&&index==inShow}" ><img :src="item.img" /><p>{{item.id}}</p></div>
+        <div v-if="arr.length==3"  v-for="(item,index)  in arr" :class="{slide:true,activeRight3:doorRight&&index==leave,activeLeft3:doorLeft&&index==leave,activeIn3:doorLeft&&index==inShow,activeIn3:doorRight&&index==inShow}" ><img :src="item.img" /><p>{{item.id}}</p></div>
+        <div v-if="arr.length==4" v-for="(item,index)  in arr" :class="{slide:true,activeRight4:doorRight&&index==leave,activeLeft4:doorLeft&&index==leave,activeIn4:doorLeft&&index==inShow,activeIn4:doorRight&&index==inShow}" ><img :src="item.img" /><p>{{item.id}}</p></div>
+      </div>
+    </div>
+
+
+  </div>
+</template>
+
+<script>
+import card from '@/components/card'
+import magi from 'magi.js'
+import pic1 from '../../assets/img/1.jpg'
+import pic2 from '../../assets/img/2.jpg'
+import pic3 from '../../assets/img/3.jpg'
+import pic4 from '../../assets/img/4.jpg'
+
+export default {
+  data () {
+    return {
+      anRight:null,
+      anLeft:null,
+      anIn:null,
+      leave:null,
+      inShow:null,
+      arr:[{
+        img:'http://imgstore.cdn.sogou.com/app/a/100540002/402468.jpg',
+        id:1
+      },{
+        img:'http://i1.hdslb.com/bfs/archive/763293ce06bf1e684ef0ea3da43ae5008d8564b8.jpg',
+        id:2
+      }
+      ,{
+        img:'http://img4.imgtn.bdimg.com/it/u=1941886659,1104103226&fm=214&gp=0.jpg',
+        id:3
+      }
+      // ,{
+      //     img:'http://imgstore.cdn.sogou.com/app/a/100540002/402468.jpg',
+      //     id:4
+      //   }
+      ],
+      userInfo: {},
+      touchDot:null,
+      interval:null,
+      time:null,
+      done:null,
+
+      door:false,
+      doorLeft:false,
+      doorRight:false
+    }
+  },
+  onShareAppMessage: function (res) {
+    console.log(res)
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target)
+    }
+    if (res.from === 'menu') {
+      // 来自页面内转发按钮
+      console.log(233,res.target)
+    }
+    return {
+      title: '6666',
+      path: '/pages/about/about'
+    }
+  },
+
+  components: {
+    card
+  },
+
+
+  methods: {
+//触摸开始事件
+    wxtouchStart: function(e) {
+
+      this.touchDot = e.pageX;
+      var that = this;
+      this.interval = setInterval(function(){
+        that.time+=1;
+      },100);
+    },
+    //触摸移动事件
+    wxtouchMove: function(e) {
+
+      let touchMove = e.pageX;
+      let touchDot = this.touchDot;
+      let time = this.time;
+      // console.log("touchMove: " + touchMove + ", touchDot: " + touchDot + ", diff: " + (touchMove - touchDot));
+      //向左滑动
+      if(touchMove - touchDot <= -40 && time<10 &&!this.done) {
+        console.log(" 向左滑动");
+        this.done = true;
+        this.scrollLeft();
+      }
+      //向右滑动
+      if (touchMove - touchDot >= 40 && time < 10 && !this.done) {
+        console.log("向右滑动");
+        this.done = true;
+        this.scrollRight();
+      }
+    },
+    //触摸结束事件
+    wxtouchEnd: function(e) {
+      clearInterval(this.interval);
+      this.time = 0;
+      this.done = false;
+    },
+
+    scrollRight(){
+      console.log('右滑动')
+      if(this.doorRight){
+        return false
+      }
+      this.arr.unshift(this.arr[this.arr.length-1])
+      this.doorRight=true;
+      setTimeout(()=>{
+        this.arr.pop()
+        this.doorRight=false;
+      },800)
+    },
+
+    scrollLeft(){
+      console.log('左滑动')
+      if(this.doorLeft){
+        return false
+      }
+      this.arr.unshift(this.arr[this.arr.length-1])
+      this.doorLeft=true;
+      setTimeout(()=>{
+        this.arr.pop()
+        this.doorLeft=false;
+      },800)
+    },
+
+    bindViewTap () {
+      const url = '../logs/logs'
+      wx.navigateTo({ url })
+    },
+
+    getUserInfo () {
+      // 调用登录接口
+      wx.login({
+        success: () => {
+          wx.getUserInfo({
+            success: (res) => {
+              this.userInfo = res.userInfo
+            }
+          })
+        }
+      })
+    },
+    clickHandle (msg, ev) {
+      console.log('clickHandle:', msg, ev)
+    },
+
+
+  },
+
+  created () {
+
+
+    this.leave=this.arr.length;
+    this.inShow=this.arr.length-1;
+    console.log(this.leave,this.inShow)
+    // 调用应用实例的方法获取全局数据
+    this.getUserInfo()
+
+  }
+}
+</script>
+
+<style scoped lang="less">
+
+
+  @keyframes animation{from{opacity:0;transform:scale(1.2) rotateX(45deg)} to{ }}
+
+  .slider div p{
+    color:#1c1c1c;position:absolute;bottom:-55px; font-family:Raleway; font-size:16px;
+  }
+  .slider{
+    animation:animation ease 1s;animation-delay:.8s;animation-fill-mode:backwards;
+    margin: 0 auto;
+    height:360px;
+    width:240px;
+    padding-top: 100px;
+    top:100px;
+    perspective:1000px;
+    transition:ease-in-out .2s;
+
+  }
+
+  .slide img { text-align:center;width:100%; height:100%; -webkit-user-drag:none;user-drag:none;-moz-user-drag:none; border-radius:2px; }
+  .slide{
+    user-select:none;
+    position:absolute;
+    height:280px;
+    width:240px;
+    box-shadow: 0px 3px 20px 0px rgba(0,0,0,0.3);
+    background:#fcfcfc;
+    transform-style:preserve-3d;
+    text-align:center;
+    border:12px white solid;
+    box-sizing:border-box;
+    border-bottom:55px white solid;
+    border-radius:5px;
+    p{
+    padding: 10px 0;
+   }
+  }
+  .transition {
+    transition: cubic-bezier(0,1.95,.49,.73) .4s ;
+  }
+
+  @keyframes outRight2{from{transform: translateZ(50px) translateY(-10px); } to{ transform: translateZ(50px) translateY(-10px) translateX(200px) rotateZ(20deg);  }}
+  @keyframes outLight2{from{transform: translateZ(50px) translateY(-10px);} to{ transform:translateX(-200px) translateZ(50px) translateY(-10px)  rotateZ(-20deg)}}
+  @keyframes inShow2{from{  transform: translateZ(50px)  translateY(-10px);} to{ transform: translateZ(50px) translateY(-10px); }}
+
+
+  .activeRight2{
+    animation:outRight2 ease 1s;animation-fill-mode:backwards;
+  }
+
+  .activeLeft2{
+    animation:outLight2 ease 1s;animation-fill-mode:backwards;
+  }
+
+  .activeIn2{
+    position: absolute;
+    animation:inShow2 ease 0.8s;animation-fill-mode:backwards ;
+  }
+
+  @keyframes outRight3{from{transform: translateZ(100px) translateY(-20px); } to{ transform: translateZ(100px) translateY(-20px) translateX(200px) rotateZ(20deg);  }}
+  @keyframes outLight3{from{transform: translateZ(100px) translateY(-20px);} to{ transform:translateX(-200px) translateZ(100px) translateY(-20px)  rotateZ(-20deg)}}
+  @keyframes inShow3{from{  transform: translateZ(100px)  translateY(-20px);} to{ transform: translateZ(100px) translateY(-20px); }}
+
+
+  .activeRight3{
+    animation:outRight3 ease 1s;animation-fill-mode:backwards;
+  }
+
+  .activeLeft3{
+    animation:outLight3 ease 1s;animation-fill-mode:backwards;
+  }
+
+  .activeIn3{
+    position: absolute;
+    animation:inShow3 ease 0.8s;animation-fill-mode:backwards ;
+  }
+
+  @keyframes outRight4{from{transform: translateZ(150px) translateY(-30px); } to{ transform: translateZ(150px) translateY(-30px) translateX(200px) rotateZ(20deg);  }}
+  @keyframes outLight4{from{transform: translateZ(150px) translateY(-30px);} to{ transform:translateX(-200px) translateZ(150px) translateY(-30px)  rotateZ(-20deg)}}
+  @keyframes inShow4{from{  transform: translateZ(150px)  translateY(-30px);} to{ transform: translateZ(150px) translateY(-30px); }}
+
+
+  .activeRight4{
+    animation:outRight4 ease 1s;animation-fill-mode:backwards;
+  }
+
+  .activeLeft4{
+    animation:outLight4 ease 1s;animation-fill-mode:backwards;
+  }
+
+  .activeIn4{
+    position: absolute;
+    animation:inShow4 ease 0.8s;animation-fill-mode:backwards ;
+  }
+
+
+  .slide:nth-child(1){
+    z-index: 9;
+    transform: translateZ(0px) translateY(0px);
+  }
+  .slide:nth-child(2){
+    z-index: 9;
+    transform: translateZ(50px) translateY(-10px);
+
+  }
+  .slide:nth-child(3){
+    z-index: 99;
+    transform: translateZ(100px)  translateY(-20px);
+
+  }
+  .slide:nth-child(4){
+    z-index: 99;
+    transform: translateZ(150px) translateY(-30px);
+  }
+  .slide:nth-child(5){
+    z-index: 99;
+    transform: translateZ(200px) translateY(-40px);
+  }
+</style>
