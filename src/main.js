@@ -31,12 +31,12 @@ export default {
         // iconPath: 'static/images/icon_nav_button.png',
         // selectedIconPath: 'static/images/icon_nav_button.png'
       },
-        {
-          pagePath: 'pages/demo/demo',
-          text: 'Demo',
-          // iconPath: 'static/images/icon_nav_cell.png',
-          // selectedIconPath: 'static/images/icon_nav_cell.png'
-        },
+        // {
+        //   pagePath: 'pages/demo/demo',
+        //   text: 'Demo',
+        //   // iconPath: 'static/images/icon_nav_cell.png',
+        //   // selectedIconPath: 'static/images/icon_nav_cell.png'
+        // },
         {
           pagePath: 'pages/about/about',
           text: '关于我们',
